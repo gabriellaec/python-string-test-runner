@@ -348,6 +348,10 @@ class TestCaseWrapper(unittest.TestCase):
     def module(self):
         if not hasattr(self, '_module'):
             self._module = imp.new_module('user_module')
+            exec('from typing import *', _module.__dict__)
+            exec('import collections', _module.__dict__)
+            exec('import math', _module.__dict__)
+            exec('import itertools', _module.__dict__)
             exec(self.TARGET_CODE, self._module.__dict__)
         return self._module
 
