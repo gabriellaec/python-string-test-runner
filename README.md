@@ -8,7 +8,7 @@ Unittest wrapper that runs tests contained in strings.
 
 ## Running tests
 
-    str_test.py [-f function_name] file_with_the_function.py test_file.py
+    run_str_test.py [-f function_name] file_with_the_function.py test_file.py
 
 There is an example [here](#example)
 
@@ -41,4 +41,4 @@ def add_numbers(a, b):
 
 You can run the tests with:
 
-    str_test.py -f add_numbers my_implementation.py all_tests.py
+    run_str_test.py -f add_numbers my_implementation.py all_tests.py
