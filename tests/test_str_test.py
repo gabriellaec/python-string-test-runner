@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import unittest
 from strtest import str_test
 
@@ -353,10 +355,14 @@ print('Fim')
 class StrTestTest(unittest.TestCase):
     def test_doesnt_break_with_syntax_error(self):
         result = str_test.run_tests(TARGET_CODE_0, TEST_CODE1, 'ex1')
+        print(result)
+        print("_____________________________")
         self.assertFalse(result.success)
         self.assertEqual(1, len(result.failure_msgs))
         self.assertEqual('Erro de sintaxe (código Python inválido)',
                          result.failure_msgs[0])
+        print(str(result.stack_traces[0]))
+
         self.assertEqual(2, result.total_tests)
 
     def test_doesnt_break_with_missing_function(self):

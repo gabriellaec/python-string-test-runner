@@ -18,6 +18,18 @@ START_SEP = '<|><'
 END_SEP = '><|>'
 TIME_LIMIT_EXCEEDED = 'Tempo limite excedido'
 SYNTAX_ERROR = 'Erro de sintaxe (código Python inválido)'
+###### Detalhamento dos erros de sintaxe
+IMPORT_ERROR = 'Erro de import (verifique a maneira com que está realizando o import)'
+CLOSE_PARENTHESIS_ERROR = 'Erro de parênteses (faltou fechar um parênteses)'
+OPEN_PARENTHESIS_ERROR = 'Erro de parênteses (faltou abrir um parênteses)'
+POWER_ERROR = 'Erro de potência (potência em Python é: **)'
+IF_ERROR = 'Erro de if (faltou : na linha do if)'
+WHILE_ERROR = 'Erro de while (faltou : na linha do while)'
+FOR_ERROR = 'Erro de for (faltou : na linha do for)'
+DEF_ERROR = 'Erro de def (faltou : na linha do def)'
+MULTIPLICATION_ERROR = 'Erro de multiplicação (faltou o sinal de *)'
+PRINT_ERROR = 'Erro de print (print tem parênteses no python 3)'
+########
 DEFAULT_MSG = 'Não funcionou para algum teste'
 FILE_STR = 'File "<string>", '
 
@@ -66,22 +78,71 @@ def run_tests(target_code, test_code, func_name):
         success = result.wasSuccessful()
         for failure in result.failures + result.errors:
             st = failure[1]
+
+            if "import" in st:
+                stfunction = str ( st[st.index("import"):] )
+            elif "Import" in st:
+                stfunction = str ( st[st.index("import"):] )
+            else:
+                stfunction = str ( st[st.rindex( ("line") ):] )
+                
+            stfunction = str ( stfunction[:stfunction.index("SyntaxError")] )
+
             fm = get_message(failure[0])
+           
             stdout = get_stdout(failure[0])
             if START_SEP in st and END_SEP in st:
                 fm = st[st.find(START_SEP) + len(START_SEP):st.find(END_SEP)]
-            elif 'TimeoutError' in st:
+            if 'TimeoutError' in st:
                 fm = TIME_LIMIT_EXCEEDED
-            elif 'SyntaxError: invalid syntax' in st:
-                fm = SYNTAX_ERROR
-                if FILE_STR in st:
-                    st = st[st.rindex(FILE_STR) + len(FILE_STR):]
+########
+            if "import" in stfunction or "Import" in stfunction:
+                fm=IMPORT_ERROR
+            if "(" in stfunction:
+                abre_parenteses=stfunction.count('(')
+                fecha_parenteses=stfunction.count(')')
+                if abre_parenteses>fecha_parenteses:
+                    fm=CLOSE_PARENTHESIS_ERROR
+                elif abre_parenteses<fecha_parenteses:
+                    fm=OPEN_PARENTHESIS_ERROR
+                
+        
+            if "if" in stfunction and ":" not in stfunction:
+                fm=IF_ERROR
+                
+            if "while" in stfunction and ":" not in stfunction:
+                fm=WHILE_ERROR
+                
+            if "for" in stfunction and ":" not in stfunction:
+                fm=FOR_ERROR
+                
+            if "def" in stfunction and ":" not in stfunction:
+                fm=DEF_ERROR
+            
+            if ")(" in stfunction:
+                fm=MULTIPLICATION_ERROR
+            
+            if "print" in stfunction and "(" not in stfunction:
+                fm=PRINT_ERROR
+
+
+#########
+            # elif 'SyntaxError: invalid syntax' in st:
+            #     fm = SYNTAX_ERROR
+            #     if FILE_STR in st:
+            #         st = st[st.rindex(FILE_STR) + len(FILE_STR):]
             if 'PriorityError' in st:
                 st = st[st.rindex('PriorityError'):st.index(START_SEP)]
+            
+           
             if (fm, st) not in msgs:
-                msgs[(fm, st)] = stdout
+                msgs[(fm, st)] = st
             success = False
         # Filter repeated messages
+        print("******")
+        
+        print(msgs)
+        print("******")
         if msgs:
             failure_msgs, stack_traces = zip(*msgs)
             stdouts = list(msgs.values())

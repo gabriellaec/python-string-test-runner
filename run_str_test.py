@@ -31,12 +31,16 @@ if target_code is not None and test_code is not None:
     result = ch.run_tests(target_code, test_code, args.function_name)
 
 if result:
+    print(result)
+
     if result.success:
-        print('Passed all tests!')
+        print(str(result))
+        # print('Passed all tests!')
     else:
         print('Did not pass all tests :(')
         print('Failure messages:')
         for msg in result.failure_msgs:
+            print(str(result))
             print(msg)
         if args.verbose:
             print('\nStack traces:')
